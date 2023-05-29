@@ -1,8 +1,4 @@
-Yes, there is a potential contention issue with the state table as written. Specifically, there are two states (`POWEROFF` and `BUTTON_TIMER_ON`) where the `relayState` variable is updated. If both of these states are active at the same time, there could be a contention issue where the `relayState` variable is updated by both states, leading to unpredictable behavior.
 
-To avoid this issue, it would be best to modify the state table and program logic so that only one state updates the `relayState` variable at a time. One possible approach would be to make the `BUTTON_TIMER_ON` state dependent on the `SHUTDOWN_ON` state, so that the `relayState` variable is only updated by the `SHUTDOWN_ON` state. For example, the state table could be modified as follows:
-
-```
 |              | Button State | Last Button State | Button Timer        | Relay | Shutdown | Status |                    |                                              |
 |--------------|--------------|-------------------|---------------------|-------|----------|--------|--------------------|----------------------------------------------|
 | Relay        | On           | Off               | N/A                 | Off   | Off      | N/A    | Turn relay on      |                                              |
@@ -11,9 +7,3 @@ To avoid this issue, it would be best to modify the state table and program logi
 | Button Timer | Off          | On                | Stop                | Off   | On       | On     | Start Button Timer |                                              |
 | Button Timer | Off          | On                | Stop                | On    | On       | On     | Start Button Timer |                                              |
 ```
-
-With this modification, the `BUTTON_TIMER_ON` state only updates the `shutdownState` variable, while the `SHUTDOWN_ON` state updates both the `relayState` and `shutdownState` variables. This ensures that only one state updates the `relayState` variable at a time, avoiding contention issues.
-
-The program logic would need to be updated accordingly to reflect this modification to the state table.
-
-https://poe.com/s/Lb0xV0KzwsHR5YQJvemv
