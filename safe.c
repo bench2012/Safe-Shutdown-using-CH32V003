@@ -81,7 +81,7 @@ int main(void)
 
     int relay_state = 0;    // Relay is initially off
     int shutdown_state = 0; // Shutdown is initially off
-    int status_state = 0;   // Status is initially low
+    int status_state = 1;   // Status is initially high
     int button_state = 0;   // Button is initially not pressed
     int button_last_state = 0;  // Last state of the button
     int button_press_time = 0;  // Time the button was pressed
@@ -92,7 +92,7 @@ int main(void)
     pinMode(BUTTON_PIN, pinMode_I_pullDown);
 	pinMode(RELAY_PIN, pinMode_O_pushPull);
 	pinMode(SHUTDOWN_PIN, pinMode_O_pushPull);
-	pinMode(STATUS_PIN, pinMode_I_pullDown);
+	pinMode(STATUS_PIN, pinMode_I_pullUp);
 	digitalWrite(RELAY_PIN, 0);
 	digitalWrite(SHUTDOWN_PIN, 0);
 	//Initialize system tick
@@ -114,8 +114,8 @@ int main(void)
 	    button_state = digitalRead(BUTTON_PIN);
         if ( button_state == HIGH && button_last_state == LOW ) {
             button_press_time = systick_cnt;
-           // printf( "Button pressed shutdown detect\n\r");
-           // printf( "button_press_time: %d\n\r", button_press_time);         
+          // printf( "Button pressed shutdown detect\n\r");
+          // printf( "button_press_time: %d\n\r", button_press_time);         
                                                                 }
         
          // Check for short press (<2 sec) if the button change state from High to Low
@@ -125,16 +125,16 @@ int main(void)
                 digitalWrite(SHUTDOWN_PIN, 1);
         	if (systick_cnt - button_press_time > HOLD_TIME) {
            										
-               	printf( "button_ticks: %lu\n\r", (systick_cnt - button_press_time));								    
+            // printf( "button_ticks: %lu\n\r", (systick_cnt - button_press_time));								    
                 // Long press: initiate shutdown sequence and power off sqeuence
                 shutdown_ticks = systick_cnt;
-               // printf( "Long press: initiate shutdown sequence and power off sqeuence\n\r");
+              // printf( "Long press: initiate shutdown sequence and power off sqeuence\n\r");
                 // Check for shutdown timer expiration and system status pin
                 // Read the status input
                 status_state = digitalRead(STATUS_PIN);
-        		while (systick_cnt - shutdown_ticks < SHUTDOWN_TIMER && status_state == 0 ) {
+        		while (systick_cnt - shutdown_ticks < SHUTDOWN_TIMER && status_state == 1 ) {
         		    status_state = digitalRead(STATUS_PIN);
-        		   // printf( "System Status: %d / Shutdown Timer Milliseconds: %lu\n\r", status_state, ((systick_cnt - shutdown_ticks)));
+        		  // printf( "System Status: %d / Shutdown Timer Milliseconds: %lu\n\r", status_state, ((systick_cnt - shutdown_ticks)));
 				                                                            							}
                 relay_state = 0;
             	digitalWrite(RELAY_PIN, 0);
@@ -142,8 +142,8 @@ int main(void)
                 
          														} 
          }
-         	   // printf( "1 Button current state:  %d\n\r", button_state);
-        		printf( "2 Button pressed. Last state:  %d\n\r", button_last_state);
+         	  // printf( "1 Button current state:  %d\n\r", button_state);
+        	// printf( "2 Button pressed. Last state:  %d\n\r", button_last_state);
         		button_last_state = button_state;
                 button_state = digitalRead(BUTTON_PIN);
          // Cheak if relay is off ie. power down 
@@ -152,19 +152,19 @@ int main(void)
 	       while (button_state == LOW && button_last_state == LOW) {
 	            button_last_state = button_state;
 			  	button_state = digitalRead(BUTTON_PIN);
-			  	printf( "Start loop Button current state:  %d\n\r", button_state);
-        		printf( "Start loop Button Last state:  %d\n\r", button_last_state);
-			  	Delay_Ms(50);
+		// printf( "Start loop Button current state:  %d\n\r", button_state);
+        // printf( "Start loop Button Last state:  %d\n\r", button_last_state);
+		//	  	Delay_Ms(50);
                  			  		  	                           }
         // Turn on power          			  		  	                           
 
-			 // printf( "Button pressed startup\n\r");
+			// printf( "Button pressed startup\n\r");
        // Wait for button press
 		   while (button_state == HIGH && button_last_state == LOW ) {
 			  	button_last_state = button_state;
 			  	button_state = digitalRead(BUTTON_PIN);
-			  	printf( "Button pressed. Button current state:  %d\n\r", button_state);
-        		printf( "Button pressed. Last state:  %d\n\r", button_last_state);
+			   // printf( "Button pressed. Button current state:  %d\n\r", button_state);
+        	// printf( "Button pressed. Last state:  %d\n\r", button_last_state);
 			  	Delay_Ms(50);
     		  	                                                     }
 			  relay_state = 1;
@@ -175,12 +175,12 @@ int main(void)
            while (button_state == HIGH && button_last_state == HIGH ) {
                 button_last_state = button_state;
 			  	button_state = digitalRead(BUTTON_PIN);
-			  	printf( "Wait for release. Button current state:  %d\n\r", button_state);
-        		printf( "Wait for release. Last state:  %d\n\r", button_last_state);
-			  	Delay_Ms(50);
+			   // printf( "Wait for release. Button current state:  %d\n\r", button_state);
+               // printf( "Wait for release. Last state:  %d\n\r", button_last_state);
+		//	  	Delay_Ms(50);
 				                                                      }
 				                  }								            		
-
+//Delay_Ms(50);
 		}
 return(0);
 }
